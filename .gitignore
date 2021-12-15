@@ -1,0 +1,30 @@
+# Ignore local virtualenvs
+lib/
+bin/
+include/
+.Python/
+vev/
+.env
+
+# These lines are suggested according to the svn:ignore property
+# Feel free to enable them by uncommenting them
+*.pyc
+*.pyo
+*.swp
+*.class
+*.orig
+
+# Ignore test caches
+test/__pycache__/
+test/.pytest_cache/
+*.py[cod]
+*$py.class
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+token/*.json
+token/*.py
