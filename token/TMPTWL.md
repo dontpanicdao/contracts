@@ -1,7 +1,10 @@
 # Test Deployment for TWL ERC 20
 Contract: 0x07075f3015597c40614dce65121cef558e8941178bf1c2f9d6b25665004f4c8c
+
 Supply: 42000000000000000000000000000000
+
 Name: TmpDontPanic
+
 Symbol: TMPTWL
 
 ## Deploy Command
