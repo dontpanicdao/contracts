@@ -1,10 +1,10 @@
 # Ignore local virtualenvs
-lib/
 bin/
 include/
 .Python/
 vev/
 .env
+.DS_Store
 
 # These lines are suggested according to the svn:ignore property
 # Feel free to enable them by uncommenting them

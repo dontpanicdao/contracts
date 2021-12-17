@@ -16,3 +16,4 @@ Deploy transaction was sent.
 Contract address: 0x07075f3015597c40614dce65121cef558e8941178bf1c2f9d6b25665004f4c8c
 Transaction hash: 0x265b0898d1b0b80ddbfd5eb0ff56037cb5bbf12c622176a63a7a092b2e30d92
 ```
+

@@ -27,7 +27,7 @@ async def get_starknet():
 
 @pytest.mark.asyncio
 async def test_erc20(get_starknet):
-    supply = uint(42000000000000000000000000000000)
+    supply = uint(42000000000000000000000000000)
     name = str_to_felt('TmpDontPanic')
     sym = str_to_felt('TMPTWL')
     constructor_calldata=[
