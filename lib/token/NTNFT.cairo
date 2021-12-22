@@ -37,6 +37,18 @@ end
 ####################
 
 @storage_var
+func current_nonce() -> (res: felt):
+end
+
+@storage_var
+func past_hashes(nonce: felt) -> (token_hash: felt):
+end
+
+@storage_var
+func token_hash_store() -> (res: felt):
+end
+
+@storage_var
 func base_uri_store() -> (base_uri: BaseURI):
 end
 
@@ -73,6 +85,7 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     name_store.write(name)
     symbol_store.write(symbol)
     base_uri_store.write(base_uri)
+    current_nonce.write(1)
 
     return()
 end
@@ -91,6 +104,12 @@ end
 func tokenMeta{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(token_id: felt) -> (res: felt):
     let (token: TokenMeta) = tokens.read(token_id)
     return (token)
+end
+
+@view
+func pastNonce{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(nonce: felt) -> (res: felt):
+    let (hash) = past_hashes.read(nonce)
+    return (hash)
 end
 
 @view
@@ -156,9 +175,7 @@ end
 ####################
 
 @external
-func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(token_id: felt, token_owner: felt, name: felt) -> ():
-    Only_Owner()
-
+func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(token_id: felt, token_owner: felt, name: felt, token_hash: felt) -> ():
     assert_not_zero(token_id)
     assert_not_zero(token_owner)
     assert_not_zero(name)
@@ -166,7 +183,16 @@ func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(token
     let (token_exists) = ownerOf(token_id)
     assert (token_exists) = 0
 
-    tokens.write(token_id, TokenMeta(owner=token_owner, name=name))
+    gradeExam(hashAnswersInOrder, theCorrectExamHash)
+    let (message) = hash2{hash_ptr=pedersen_ptr}(x=nonce, y=token_hash)
+
+    verify_ecdsa_signature(
+        message=message,
+        public_key=vote_info_ptr.pub_key,
+        signature_r=vote_info_ptr.r,
+        signature_s=vote_info_ptr.s)
+
+    tokens.write(token_id, TokenMeta(owner=token_owner, name=name, nonce=1))
 
     let (balance) = balances.read(token_owner)
     balances.write(token_owner, balance + 1)
@@ -191,6 +217,9 @@ func burn{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(token
     return ()
 end
 
+# only that user could have made that signature
+msg = hash(nonce, exam_result_hash)
+
 @external
 func transferContractOwnership{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(new_owner: felt) -> (new_owner: felt):
     Only_Owner()
@@ -213,6 +242,16 @@ end
 
 @external
 func updateURI{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(new_uri: BaseURI):
+    Only_Owner()
+
+    let (prev_uri: BaseURI) = base_uri_store.read()
+    base_uri_store.write(new_uri)
+
+    return ()
+end
+
+@external
+func bumpTokenNonce{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(token_id: felt):
     Only_Owner()
 
     let (prev_uri: BaseURI) = base_uri_store.read()
