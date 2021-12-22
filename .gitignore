@@ -29,8 +29,5 @@ test/.pytest_cache/
 token/*.json
 token/*.py
 
-lib/**/*abi*
-lib/**/*compiled*
-
 **/*abi*
 **/*compiled*
